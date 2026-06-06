@@ -33,4 +33,4 @@ Contoh output Serial Monitor:
 
 ```text
 Suhu: 29.0 C | Kelembapan: 75% | MQ135: 520 | Kualitas udara: Buruk
-```'
+````
