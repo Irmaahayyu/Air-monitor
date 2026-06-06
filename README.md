@@ -1,36 +1,71 @@
-# Air Quality Monitoring System
+# Air Monitoring System with Arduino
 
 ## Deskripsi
-Sistem monitoring kualitas udara berbasis Arduino menggunakan sensor MQ135 dan DHT11. Data suhu, kelembapan, dan kualitas udara ditampilkan pada LCD I2C serta Serial Monitor.
+Sistem monitoring kualitas udara berbasis Arduino Uno menggunakan sensor MQ135 dan DHT11. Sistem mampu memantau suhu, kelembapan, dan kualitas udara secara real-time.
+
+## Fitur
+- Monitoring suhu dan kelembapan menggunakan DHT11
+- Monitoring kualitas udara menggunakan MQ135
+- Tampilan data pada LCD I2C 16x2
+- Buzzer aktif saat kualitas udara buruk
+- Fan otomatis aktif saat suhu > 35°C
+- Monitoring melalui Serial Monitor
 
 ## Komponen
 - Arduino Uno
-- MQ135
 - DHT11
+- MQ135
 - LCD I2C 16x2
 - Buzzer
+- Relay 1 Channel
+- Fan DC 5V
 - Breadboard
-- Kabel jumper
+- Jumper Wire
 
-## Pin yang Digunakan
+## Wiring
 
-| Komponen | Pin |
-|-----------|-----|
-| DHT11 | D2 |
-| MQ135 | A0 |
+| Komponen | Pin Arduino |
+|-----------|------------|
+| DHT11 OUT | D4 |
+| MQ135 AO | A0 |
 | Buzzer | D8 |
-| LCD I2C SDA | A4 |
-| LCD I2C SCL | A5 |
+| Relay IN | D7 |
+| LCD SDA | A4 |
+| LCD SCL | A5 |
 
-## Cara Kerja
-1. DHT11 membaca suhu dan kelembapan.
-2. MQ135 membaca kualitas udara.
-3. Data ditampilkan pada LCD dan Serial Monitor.
-4. Jika kualitas udara buruk, buzzer akan menyala.
+## Logika Sistem
 
-## Hasil
-Contoh output Serial Monitor:
+### Kualitas Udara
+| Nilai MQ135 | Status |
+|------------|--------|
+| < 250 | Baik |
+| 250 - 449 | Sedang |
+| ≥ 450 | Buruk |
 
-```text
-Suhu: 29.0 C | Kelembapan: 75% | MQ135: 520 | Kualitas udara: Buruk
-````
+### Fan
+| Suhu | Fan |
+|-------|------|
+| ≤ 35°C | OFF |
+| > 35°C | ON |
+
+## Diagram Blok
+
+DHT11 ----\
+           \
+MQ135 -----> Arduino UNO -----> LCD I2C
+                 |
+                 +----> Buzzer
+                 |
+                 +----> Relay ----> Fan
+
+## Hasil Tampilan LCD
+
+Baris 1:
+T:30C H:75%
+
+Baris 2:
+Udara:Baik
+
+## Author
+Nama: [Nama Kamu]
+Universitas Lampung
