@@ -48,16 +48,6 @@ Sistem monitoring kualitas udara berbasis Arduino Uno menggunakan sensor MQ135 d
 | ≤ 35°C | OFF |
 | > 35°C | ON |
 
-## Diagram Blok
-
-DHT11 ----\
-           \
-MQ135 -----> Arduino UNO -----> LCD I2C
-                 |
-                 +----> Buzzer
-                 |
-                 +----> Relay ----> Fan
-
 ## Hasil Tampilan LCD
 
 Baris 1:
