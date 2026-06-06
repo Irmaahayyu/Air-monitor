@@ -2,11 +2,12 @@
 #include <LiquidCrystal_I2C.h>
 #include <DHT.h>
 
-#define DHTPIN 2
+#define DHTPIN 4
 #define DHTTYPE DHT11
 
 #define MQ135 A0
 #define BUZZER 8
+#define FAN 7
 
 DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -18,7 +19,12 @@ void setup() {
   delay(3000);
 
   pinMode(BUZZER, OUTPUT);
+  pinMode(FAN, OUTPUT);
+
   digitalWrite(BUZZER, LOW);
+
+  // Relay biasanya active LOW
+  digitalWrite(FAN, HIGH);
 
   lcd.init();
   lcd.backlight();
@@ -35,11 +41,11 @@ void loop() {
 
   float suhu = dht.readTemperature();
   float kelembapan = dht.readHumidity();
-
   int kualitasUdara = analogRead(MQ135);
 
   String statusUdara;
 
+  // MQ135 + Buzzer
   if (kualitasUdara < 250) {
     statusUdara = "Baik";
     digitalWrite(BUZZER, LOW);
@@ -53,8 +59,15 @@ void loop() {
     digitalWrite(BUZZER, HIGH);
   }
 
-  Serial.print("Suhu: ");
+  // Fan ON jika suhu > 30°C
+  if (!isnan(suhu) && suhu > 35) {
+    digitalWrite(FAN, LOW);   // ON (relay active LOW)
+  } else {
+    digitalWrite(FAN, HIGH);  // OFF
+  }
 
+  // Serial Monitor
+  Serial.print("Suhu: ");
   if (isnan(suhu)) {
     Serial.print("Gagal");
   } else {
@@ -63,7 +76,6 @@ void loop() {
   }
 
   Serial.print(" | Kelembapan: ");
-
   if (isnan(kelembapan)) {
     Serial.print("Gagal");
   } else {
@@ -74,31 +86,34 @@ void loop() {
   Serial.print(" | MQ135: ");
   Serial.print(kualitasUdara);
 
-  Serial.print(" | Kualitas udara: ");
+  Serial.print(" | Status: ");
   Serial.println(statusUdara);
 
-
-  lcd.clear();
-  
+  // LCD Baris 1
   lcd.setCursor(0, 0);
 
   if (!isnan(suhu)) {
-    lcd.print("Suhu:");
+    lcd.print("T:");
     lcd.print(suhu, 1);
-    lcd.print("C");
+    lcd.print("C ");
   } else {
-    lcd.print("T:Gagal");
+    lcd.print("T:Gagal ");
   }
 
-  lcd.setCursor(0, 1);
-  lcd.print(statusUdara);
-
-  lcd.print(" Kelembapan:");
+  lcd.print("H:");
 
   if (!isnan(kelembapan)) {
     lcd.print((int)kelembapan);
-    lcd.print("%");
+    lcd.print("% ");
   }
+
+  lcd.print("   ");
+
+  // LCD Baris 2
+  lcd.setCursor(0, 1);
+  lcd.print("Udara:");
+  lcd.print(statusUdara);
+  lcd.print("     ");
 
   delay(2000);
 }
